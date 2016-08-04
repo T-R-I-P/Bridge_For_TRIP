@@ -42,28 +42,6 @@ function main(){
 	app.get('/stat', function(req, res){
 		res.sendFile(path.resolve('../Done/_Dump/stats.json'));
 	});
-
-	/* Bugs ******************************************/
-	app.get('/log', function(req, res){
-		var log = _this.log;
-		res.send( '<%= this.log %=>' );
-	});
-	app.get('/id', function(req, res){
-		res.send(_this.id);
-	});
-	app.get('/fbx_fcs', function(req, res){
-		res.send(_this.Fbxfcs);
-	});
-	app.get('/mesh_fcs', function(req, res){
-		res.send(_this.Meshfcs);
-	});
-	app.get('/poly_fcs', function(req, res){
-		res.send(_this.Polyfcs);
-	});
-	app.get('/skel_fcs', function(req, res){
-		res.send(_this.Skelfcs);
-	});
-	/*******************************************/
 	
 	http.listen(port, function(req,res){
 		console.log('listening on *:' + port);
@@ -98,11 +76,13 @@ function main(){
 			}
 			else{
 				console.log("Checksum... passed!");
-				fs.writeFile( __dirname + "/teddy.obj",function(err){
+				console.log(__dirname + "/../teddy.obj");
+				fs.writeFile( __dirname + "/teddy.obj",_this.teddy,function(err){
 					if(err){
 						console.log("Save Obj failed!");
 						io.emit('error','Save Obj Failed.');
-					} else{
+					}
+					else{
 						console.log("Save Obj... Success!");
 						call_sh(function pullback(log){
 							// Server side work all done.
@@ -132,7 +112,7 @@ function saveStats(log){
 	// log err
 	var j = {
 		'id' : _this.id,
-		'log' : 1 + log,//JSON.parse('{' + log + '}'),
+		'log' : log,//JSON.parse('{' + log + '}'),
 		'fcs' : {
 			'mesh' : Meshchecksum,
 			'poly' : Polychecksum,
@@ -140,7 +120,7 @@ function saveStats(log){
 		}
 	};
 	
-	console.log(j.log);
+	console.log("log = " + j.log);
 	
 	fs.writeFile('../Done/_Dump/stats.json',JSON.stringify(j,null,4),function(err){
 		if(err){
@@ -189,7 +169,7 @@ function call_sh(call_back){
 			} 
 			else{ 
 				// Finish Building Pipeline
-				console.log('buildFbx... Success');
+				console.log('buildFbx... Done');
 				call_back(output);
 			}
 		})
