@@ -1,0 +1,28 @@
+function (err){
+					if(err){
+						console.log("Save Obj failed!");
+					} else{
+						console.log("Save Obj... Success!");
+						call_sh(function pullback(){
+							// Server side work all done.
+							var Fbxchecksum = checksum(path.resolve('../Done/Pinocchio.fbx'));
+							console.log('Fbx Checksum = ' + Fbxchecksum);
+							_this.Fbxfcs = Fbxchecksum;
+
+							var Meshchecksum = checksum(path.resolve('../Done/_Dump/teddy.json'));
+							console.log('Mesh Checksum = ' + Meshchecksum);
+							_this.MeshFcs = Meshchecksum;
+
+							var Polychecksum = checksum(path.resolve('../Done/_Dump/teddy_poly.json'));
+							console.log('Polygon Checksum = ' + Polychecksum);
+							_this.Polyfcs = Polychecksum;
+
+							var Skelchecksum = checksum(path.resolve('../Done/_Dump/skeleton.json'));
+							console.log('Skeleton Checksum = ' + Skelchecksum);
+							_this.Skelfcs = Skelchecksum;
+
+							console.log('All Done.');
+							io.emit('done');
+						});
+					}
+				}
