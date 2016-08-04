@@ -39,6 +39,10 @@ function main(){
 		res.sendFile(path.resolve('../Done/_Dump/skeleton.json'));
 	});
 	
+	app.get('/stat', function(req, res){
+		res.sendFile(path.resolve('../Done/_Dump/stats.json'));
+	});
+
 	/* Bugs ******************************************/
 	app.get('/log', function(req, res){
 		var log = _this.log;
@@ -94,37 +98,58 @@ function main(){
 			}
 			else{
 				console.log("Checksum... passed!");
-				fs.writeFile("teddy.obj",function(err){
+				fs.writeFile( __dirname + "/teddy.obj",function(err){
 					if(err){
 						console.log("Save Obj failed!");
+						io.emit('error','Save Obj Failed.');
 					} else{
 						console.log("Save Obj... Success!");
-						call_sh(function pullback(){
+						call_sh(function pullback(log){
 							// Server side work all done.
-							var Fbxchecksum = checksum(path.resolve('../Done/Pinocchio.fbx'));
-							console.log('Fbx Checksum = ' + Fbxchecksum);
-							_this.Fbxfcs = Fbxchecksum;
-
-							var Meshchecksum = checksum(path.resolve('../Done/_Dump/teddy.json'));
-							console.log('Mesh Checksum = ' + Meshchecksum);
-							_this.MeshFcs = Meshchecksum;
-
-							var Polychecksum = checksum(path.resolve('../Done/_Dump/teddy_poly.json'));
-							console.log('Polygon Checksum = ' + Polychecksum);
-							_this.Polyfcs = Polychecksum;
-
-							var Skelchecksum = checksum(path.resolve('../Done/_Dump/skeleton.json'));
-							console.log('Skeleton Checksum = ' + Skelchecksum);
-							_this.Skelfcs = Skelchecksum;
-
-							console.log('All Done.');
-							io.emit('done');
+							saveStats(log);
 						});
 					}
 				});
 			}
 		});
 
+	});
+}
+
+function saveStats(log){
+	var Fbxchecksum = checksum(path.resolve('../Done/Pinocchio.fbx'));
+	console.log('Fbx Checksum = ' + Fbxchecksum);
+
+	var Meshchecksum = checksum(path.resolve('../Done/_Dump/teddy.json'));
+	console.log('Mesh Checksum = ' + Meshchecksum);
+
+	var Polychecksum = checksum(path.resolve('../Done/_Dump/teddy_poly.json'));
+	console.log('Polygon Checksum = ' + Polychecksum);
+
+	var Skelchecksum = checksum(path.resolve('../Done/_Dump/skeleton.json'));
+	console.log('Skeleton Checksum = ' + Skelchecksum);
+
+	// log err
+	var j = {
+		'id' : _this.id,
+		'log' : 1 + log,//JSON.parse('{' + log + '}'),
+		'fcs' : {
+			'mesh' : Meshchecksum,
+			'poly' : Polychecksum,
+			'skel' : Skelchecksum
+		}
+	};
+	
+	console.log(j.log);
+	
+	fs.writeFile('../Done/_Dump/stats.json',JSON.stringify(j,null,4),function(err){
+		if(err){
+			console.log('Error When dumping stats.json');
+		}
+		else{
+			console.log("System All Done.");
+			io.emit('done');
+		}
 	});
 }
 
@@ -165,8 +190,7 @@ function call_sh(call_back){
 			else{ 
 				// Finish Building Pipeline
 				console.log('buildFbx... Success');
-				_this.log = output;
-				call_back();
+				call_back(output);
 			}
 		})
 	}
