@@ -1,3 +1,4 @@
+var cors = require('cors')
 const express = require('express');
 const app = require('express')();
 const http = require('http').Server(app);
@@ -24,8 +25,9 @@ var fcs = '',
 main();
 
 function main(){
-
+	app.use(cors());
 	app.use(express.static('files'));
+
 	app.get('/fbx', function(req, res){
 		res.sendFile(path.resolve('../Done/Pinocchio.fbx'));
 	});
