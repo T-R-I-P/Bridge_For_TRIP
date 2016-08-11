@@ -5,6 +5,7 @@
   "main": "cilent.js",
   "dependencies": {
     "checksum": "^0.1.1",
+    "cors": "^2.7.1",
     "express": "^4.14.0",
     "socket.io": "^1.4.8"
   },
