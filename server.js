@@ -45,6 +45,10 @@ function main(){
 		res.sendFile(path.resolve('../Done/_Dump/stats.json'));
 	});
 	
+	app.get('/tpose', function(req, res){
+		res.sendFile(path.resolve('../Done/_Dump/light_tpose.txt'));
+	});
+	
 	http.listen(port, function(req,res){
 		console.log('listening on *:' + port);
 	});

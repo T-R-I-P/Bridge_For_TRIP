@@ -2,6 +2,7 @@
 
 # overall
 mv ../buildFBX/bin/Pinocchio.fbx ../Done
+mv ../buildFBX/bin/light_tpose.txt ../Done
 mv ../Pinocchio/DemoUI/_Dump/* ../Done/_Dump
 mv ./teddy.obj ../Done
 rm -f ../buildFBX/src/References/*
