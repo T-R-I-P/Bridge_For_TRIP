@@ -183,7 +183,7 @@ function call_sh(call_back){
 			else{ 
 				// Finish Building Pipeline
 				console.log('buildFbx... Done');
-				var sp = spawn("php",["gettoken.php"])
+				var sp = spawn("php",["gentoken.php"])
 				call_back(output);
 			}
 		})
